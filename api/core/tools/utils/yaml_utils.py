@@ -6,7 +6,8 @@ from yaml import YAMLError
 
 logger = logging.getLogger(__name__)
 
-def load_yaml_file(file_path: str, ignore_error: bool = False) -> dict:
+
+def load_yaml_file(file_path: str, ignore_error: bool = True) -> dict:
     """
     Safe loading a YAML file to a dict
     :param file_path: the path of the YAML file
@@ -24,9 +25,6 @@ def load_yaml_file(file_path: str, ignore_error: bool = False) -> dict:
                 return yaml.safe_load(file)
             except Exception as e:
                 raise YAMLError(f'Failed to load YAML file {file_path}: {e}')
-    except FileNotFoundError as e:
-        logger.debug(f'Failed to load YAML file {file_path}: {e}')
-        return {}
     except Exception as e:
         if ignore_error:
             logger.warning(f'Failed to load YAML file {file_path}: {e}')
