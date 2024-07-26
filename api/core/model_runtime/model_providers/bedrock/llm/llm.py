@@ -1,8 +1,8 @@
 # standard import
 import base64
+import io
 import json
 import logging
-import mimetypes
 from collections.abc import Generator
 from typing import Optional, Union, cast
 
@@ -18,6 +18,7 @@ from botocore.exceptions import (
     UnknownServiceError,
 )
 from cohere import ChatMessage
+from PIL import Image
 
 # local import
 from core.model_runtime.entities.llm_entities import LLMResult, LLMResultChunk, LLMResultChunkDelta
@@ -459,7 +460,8 @@ class BedrockLargeLanguageModel(LargeLanguageModel):
                             # fetch image data from url
                             try:
                                 image_content = requests.get(message_content.data).content
-                                mime_type, _ = mimetypes.guess_type(message_content.data)
+                                with Image.open(io.BytesIO(image_content)) as img:
+                                    mime_type = f"image/{img.format.lower()}"
                             except Exception as ex:
                                 raise ValueError(f"Failed to fetch image data from url {message_content.data}, {ex}")
                         else:
